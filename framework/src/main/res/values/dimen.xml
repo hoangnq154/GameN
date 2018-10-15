@@ -7,4 +7,15 @@
     <dimen name="slot_item_size">95dp</dimen>
     <dimen name="slot_hint_text_size">22dp</dimen>
 
+    <dimen name="inputMapPreferenceButtonSize">40dp</dimen>
+    <dimen name="inputMapPreferenceButtonSizeX1_5">60dp</dimen>
+    <dimen name="inputMapPreferenceButtonSizeX3">120dp</dimen>
+    <dimen name="inputMapPreferenceButtonSizeX5">200dp</dimen>
+    <dimen name="galleryImageWidth">175dp</dimen>
+    <dimen name="galleryImageHeight">121dp</dimen> <!-- galleryImageWidth * 177 / 256 -->
+    <dimen name="galleryTextHeight">50dp</dimen>
+    <dimen name="galleryHalfSpacing">5dp</dimen>
+    <dimen name="cover_dimen">80dp</dimen>
+    <dimen name="image_thumbnail_size">100dp</dimen>
+
 </resources>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.hn.main.RecyclingImageView
+        android:id="@+id/imageArt"
+        android:layout_width="@dimen/galleryImageWidth"
+        android:layout_height="@dimen/galleryImageHeight"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/default_coverart" />
+    <ProgressBar
+        android:id="@+id/download_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="@dimen/galleryImageWidth"
+        android:layout_height="2dp"
+        android:layout_below="@+id/imageArt"
+        android:alpha="180"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="100"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/gameTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/download_bar"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="0dp"
+        android:text="Small Text Mortal K"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/gameDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gameTitle"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginTop="0dp"
+        android:text="(need download)"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="8sp" />
+
+</RelativeLayout>

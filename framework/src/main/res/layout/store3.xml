@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id = "@+id/layout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:clipToPadding="false"
+                android:gravity="center"
+                android:visibility="visible"
+                >
+
+            </android.support.v7.widget.RecyclerView>
+
+        </RelativeLayout>
+
+        <!--<RelativeLayout-->
+            <!--android:id = "@+id/layout3"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_height="40dp">-->
+            <!--<ImageView-->
+                <!--android:id="@+id/imageDuoi"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:scaleType="fitXY"-->
+                <!--android:src="@drawable/duoi" />-->
+        <!--</RelativeLayout>-->
+
+
+    </RelativeLayout>
+
+
+
+</FrameLayout>
