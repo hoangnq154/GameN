@@ -210,78 +210,78 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
         setContentView(R.layout.lobby_activity);
         recyclerView = findViewById(R.id.recyclerView);
 
-//        adapter = new MyAdapter(this, finalDatas, false, mImageResizer);
-//        adapter.setDefault_cover(getResources().getDrawable(R.drawable.default_coverart));
+        adapter = new MyAdapter(this, finalDatas, false, mImageResizer);
+        adapter.setDefault_cover(getResources().getDrawable(R.drawable.default_coverart));
+
+
+        //setup menu
+        mDrawerLayout = findViewById(R.id.lobbyDrawerLayout);
+//        mMenu = findViewById(R.id.drawerNavigation);
+//        mMenu.setMenuResource(R.menu.gallery_drawer);
+//        mMenu.setBackground(new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency));
+//        mMenu.setOnClickListener(this);
 //
+//        // Configure the game information drawer
+//        mGameSidebar = findViewById(R.id.gameSidebar);
+//        mGameSidebar.setBackground(new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency));
 //
-//        //setup menu
-//        mDrawerLayout = findViewById(R.id.lobbyDrawerLayout);
-////        mMenu = findViewById(R.id.drawerNavigation);
-////        mMenu.setMenuResource(R.menu.gallery_drawer);
-////        mMenu.setBackground(new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency));
-////        mMenu.setOnClickListener(this);
-////
-////        // Configure the game information drawer
-////        mGameSidebar = findViewById(R.id.gameSidebar);
-////        mGameSidebar.setBackground(new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency));
-////
-////        // Handle events from the side bar
-////        mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
+//        // Handle events from the side bar
+//        mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("N64 Emulator");
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, 0, 0) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // Hide the game information sidebar
+//                mMenu.setVisibility(View.VISIBLE);
+//                mGameSidebar.setVisibility(View.GONE);
+                recyclerView.requestFocus();
+
+                super.onDrawerClosed(drawerView);
+            }
+        };
+        mDrawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
+
+        //
+        // find the retained fragment on activity restarts
+        final FragmentManager fm = getSupportFragmentManager();
+//        mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
+//        mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
+//        mExtractRomFragment = (ExtractRomFragment) fm.findFragmentByTag(STATE_EXTRACT_ROM_FRAGMENT);
 //
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        toolbar.setTitle("N64 Emulator");
-//        setSupportActionBar(toolbar);
-//        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, 0, 0) {
-//            @Override
-//            public void onDrawerClosed(View drawerView) {
-//                // Hide the game information sidebar
-////                mMenu.setVisibility(View.VISIBLE);
-////                mGameSidebar.setVisibility(View.GONE);
-//                recyclerView.requestFocus();
-//
-//                super.onDrawerClosed(drawerView);
-//            }
-//        };
-//        mDrawerLayout.addDrawerListener(drawerToggle);
-//        drawerToggle.syncState();
-//
-//
-//        //
-//        // find the retained fragment on activity restarts
-//        final FragmentManager fm = getSupportFragmentManager();
-////        mCacheRomInfoFragment = (ScanRomsFragment) fm.findFragmentByTag(STATE_CACHE_ROM_INFO_FRAGMENT);
-////        mExtractTexturesFragment = (ExtractTexturesFragment) fm.findFragmentByTag(STATE_EXTRACT_TEXTURES_FRAGMENT);
-////        mExtractRomFragment = (ExtractRomFragment) fm.findFragmentByTag(STATE_EXTRACT_ROM_FRAGMENT);
-////
-////        if (mCacheRomInfoFragment == null) {
-////            mCacheRomInfoFragment = new ScanRomsFragment();
-////            fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
-////        }
-////
-////        if (mExtractTexturesFragment == null) {
-////            mExtractTexturesFragment = new ExtractTexturesFragment();
-////            fm.beginTransaction().add(mExtractTexturesFragment, STATE_EXTRACT_TEXTURES_FRAGMENT).commit();
-////        }
-////
-////        if (mExtractRomFragment == null) {
-////            mExtractRomFragment = new ExtractRomFragment();
-////            fm.beginTransaction().add(mExtractRomFragment, STATE_EXTRACT_ROM_FRAGMENT).commit();
-////        }
-//
-//
-//        loadRomLocal();
-//        refreshLibrary();
-////        mMenu.setPremium(dataServer.isPremium);
-//
-//        admobHelper = new AdmobHelper(this, dataServer);
-//        admobHelper.loadPage(AdmobHelper.getID());
-//
-////        if(hide_game)
-////            Notifier.showToast2(this,"Please add game from Menu");
-//
-//        if (dataServer.newVersionCode > Utils.getVersionCode(getApplicationContext()) && !dataServer.isPremium) {
-//            this.createDialogUpdate(dataServer.message_update, dataServer.forceUpdate).show();
+//        if (mCacheRomInfoFragment == null) {
+//            mCacheRomInfoFragment = new ScanRomsFragment();
+//            fm.beginTransaction().add(mCacheRomInfoFragment, STATE_CACHE_ROM_INFO_FRAGMENT).commit();
 //        }
+//
+//        if (mExtractTexturesFragment == null) {
+//            mExtractTexturesFragment = new ExtractTexturesFragment();
+//            fm.beginTransaction().add(mExtractTexturesFragment, STATE_EXTRACT_TEXTURES_FRAGMENT).commit();
+//        }
+//
+//        if (mExtractRomFragment == null) {
+//            mExtractRomFragment = new ExtractRomFragment();
+//            fm.beginTransaction().add(mExtractRomFragment, STATE_EXTRACT_ROM_FRAGMENT).commit();
+//        }
+
+
+        loadRomLocal();
+        refreshLibrary();
+//        mMenu.setPremium(dataServer.isPremium);
+
+        admobHelper = new AdmobHelper(this, dataServer);
+        admobHelper.loadPage(AdmobHelper.getID());
+
+//        if(hide_game)
+//            Notifier.showToast2(this,"Please add game from Menu");
+
+        if (dataServer.newVersionCode > Utils.getVersionCode(getApplicationContext()) && !dataServer.isPremium) {
+            this.createDialogUpdate(dataServer.message_update, dataServer.forceUpdate).show();
+        }
 
     }
 
@@ -881,8 +881,8 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
     }
 
     public void loadRomLocal() {
-//        int start = 10;
-//        localDatas.clear();
+        int start = 10;
+        localDatas.clear();
 //        final ConfigFile config = new ConfigFile( mGlobalPrefs.romInfoCache_cfg );
 //        for( final String md5 : config.keySet() ) {
 //            if (!ConfigFile.SECTIONLESS_NAME.equals(md5)) {

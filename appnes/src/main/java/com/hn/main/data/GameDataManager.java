@@ -24,7 +24,7 @@ public class GameDataManager {
 	final String TAG = GameDataManager.class.getSimpleName();
 	
 	Map<Integer,GameInfo> datas;
-	public Map<String,GameInfo> md5Datas;
+//	public Map<String,GameInfo> md5Datas;
 
 	int start = 10000;
 
@@ -32,7 +32,7 @@ public class GameDataManager {
 	
 	private GameDataManager(){
 		datas = new HashMap<Integer, GameInfo>();
-		md5Datas = new HashMap<>();
+//		md5Datas = new HashMap<>();
 	}
 	
 	public int getSize()
@@ -95,15 +95,15 @@ public class GameDataManager {
 //
 //				}
 				datas.put(game.id, game);
-				if(!game.md5.equals("") && md5Datas.get(game.md5)==null)
-				{
-					md5Datas.put(game.md5,game);
-				}
-				else
-				{
-					Log.e("DUPPLICATE GAME :" , game.name);
-				}
-				
+//				if(!game.md5.equals("") && md5Datas.get(game.md5)==null)
+//				{
+//					md5Datas.put(game.md5,game);
+//				}
+//				else
+//				{
+//					Log.e("DUPPLICATE GAME :" , game.name);
+//				}
+//
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -127,16 +127,9 @@ public class GameDataManager {
 					continue;
 				GameInfo game= new GameInfo();
 				game.type = GameInfo.TYPE_LIBRARY;
-				game.id = (start += 10);
-
-				if(list.length >= 2)
-					game.name = list[0];
-				if(list.length >= 2)
-					game.md5 = list[1];
-				if(list.length >= 3)
-					game.artUrl = list[2];
-				if(list.length >= 4)
-					game.url = list[3];
+				game.id = Integer.parseInt(list[0]);
+				if(list.length >= 1)
+					game.name = list[1];
 				game.createLocalFile();
 //				if(context instanceof SplashActivity)
 //				{
@@ -145,14 +138,14 @@ public class GameDataManager {
 //
 //				}
 				datas.put(game.id, game);
-				if(!game.md5.equals("") && md5Datas.get(game.md5)==null)
-				{
-					md5Datas.put(game.md5,game);
-				}
-				else
-				{
-					Log.e("DUPPLICATE GAME :" , game.name);
-				}
+//				if(!game.md5.equals("") && md5Datas.get(game.md5)==null)
+//				{
+//					md5Datas.put(game.md5,game);
+//				}
+//				else
+//				{
+//					Log.e("DUPPLICATE GAME :" , game.name);
+//				}
 
 			}
 		} catch (IOException e) {
@@ -185,8 +178,9 @@ public class GameDataManager {
 		if(datas.size() == 0) {
 			if (StorageHelper.is_do())
 				return;
-			InputStream is = this.context.getAssets().open("key.txt");
-			addRom(is);
+			InputStream is = this.context.getAssets().open("roms");
+			addRom_no_encyrpt(is);
+			is.close();
 		}
 	}
 

@@ -1,6 +1,8 @@
 package com.hn.main.data;
 
 
+import android.util.Log;
+
 public class GameInfo {
 
 	public static final int TYPE_LIBRARY = 0;
@@ -79,18 +81,19 @@ public class GameInfo {
 	{
 		try {
 			
-			String[] list = this.url.split("\\?");
-			String originalURL = list[0];
-			String[] tmp = originalURL.split("\\/");
-			
-			fileName = tmp[tmp.length-1];
+//			String[] list = this.url.split("\\?");
+//			String originalURL = list[0];
+//			String[] tmp = originalURL.split("\\/");
+//
+//			fileName = tmp[tmp.length-1];
+			fileName = "" + id +".bin";
 			
 			localFile = StorageHelper.getDefaultROMsDIR() + "roms/" + fileName;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//Log.i("LOCAL PATH" , localFile);
+		Log.i("LOCAL PATH" , localFile);
 		return localFile;
 	}
 	
