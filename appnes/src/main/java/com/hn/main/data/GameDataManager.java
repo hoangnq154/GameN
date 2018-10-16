@@ -121,6 +121,7 @@ public class GameDataManager {
 			while((line = br.readLine()) != null)
 			{
 				//line = Utils.decryption(line);
+				Log.d("dcm",line);
 
 				String[] list = line.split("\\^");
 				if(list.length < 3)
@@ -182,11 +183,12 @@ public class GameDataManager {
 			addRom_no_encyrpt(is);
 			is.close();
 		}
+		Log.i("laod Data Roms"," : " + datas.size());
 	}
 
 	public void loadMoreGameServer()
 	{
-		File file = new File(StorageHelper.getDefaultROMsDIR() + "rom_update_server");
+		File file = new File(StorageHelper.getBaseDIR() + "rom_update_server");
 		if (file.exists()) {
 			try{
 				FileInputStream is2 = new FileInputStream(file);

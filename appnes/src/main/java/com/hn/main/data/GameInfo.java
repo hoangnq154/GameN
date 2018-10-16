@@ -87,8 +87,9 @@ public class GameInfo {
 //
 //			fileName = tmp[tmp.length-1];
 			fileName = "" + id +".bin";
+			artUrl = "data/" + id + "/" + id +"-0.png";
 			
-			localFile = StorageHelper.getDefaultROMsDIR() + "roms/" + fileName;
+			localFile = StorageHelper.getROMsDIR() + id +"/" + fileName;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -8,8 +8,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/appgbc" />
-            <option value="$PROJECT_DIR$/appgg" />
             <option value="$PROJECT_DIR$/appnes" />
             <option value="$PROJECT_DIR$/framework" />
           </set>

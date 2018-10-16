@@ -56,8 +56,13 @@ public class StorageHelper {
 			
 	
 	}
+
+	public static String getROMsDIR()
+	{
+		return rom_dir + "roms/";
+	}
 	
-	public static String getDefaultROMsDIR()
+	public static String getBaseDIR()
 	{
 		return rom_dir;
 	}
@@ -74,10 +79,11 @@ public class StorageHelper {
 	public static boolean is_do()
 	{
 
-		String check = "x016"+"3.n64.nes.sn"+"es.gba.gbc.ma"+"me";
-
-		File file = new File("/data/data/" + check);
-		return !file.exists();
+//		String check = "x016"+"3.n64.nes.sn"+"es.gba.gbc.ma"+"me";
+//
+//		File file = new File("/data/data/" + check);
+//		return !file.exists();
+		return false;
 	}
 	//e mu. arca de.n64 .h
 	

@@ -89,7 +89,10 @@ import java.util.Set;
 import javax.net.ssl.HttpsURLConnection;
 
 import info.guardianproject.netcipher.NetCipher;
+import nostalgia.appnes.NesEmulatorActivity;
 import nostalgia.appnes.R;
+import nostalgia.framework.base.EmulatorActivity;
+import nostalgia.framework.ui.gamegallery.GameDescription;
 
 //import x0163.n64.nes.snes.gba.gbc.mame.R;
 //import info.guardianproject.netcipher.NetCipher;
@@ -171,8 +174,8 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
     List<GameInfo> libraryDatas = new ArrayList<>();
     List<GameInfo> finalDatas = new ArrayList<>();
 
-    private boolean hide_icon = true;
-    private boolean hide_game = true;
+    private boolean hide_icon = false;
+    private boolean hide_game = false;
     Menu topMenu = null;
     private AdmobHelper admobHelper = null;
 
@@ -273,15 +276,15 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
         refreshLibrary();
 //        mMenu.setPremium(dataServer.isPremium);
 
-        admobHelper = new AdmobHelper(this, dataServer);
-        admobHelper.loadPage(AdmobHelper.getID());
+//        admobHelper = new AdmobHelper(this, dataServer);
+        //admobHelper.loadPage(AdmobHelper.getID());
 
 //        if(hide_game)
 //            Notifier.showToast2(this,"Please add game from Menu");
 
-        if (dataServer.newVersionCode > Utils.getVersionCode(getApplicationContext()) && !dataServer.isPremium) {
-            this.createDialogUpdate(dataServer.message_update, dataServer.forceUpdate).show();
-        }
+//        if (dataServer.newVersionCode > Utils.getVersionCode(getApplicationContext()) && !dataServer.isPremium) {
+//            this.createDialogUpdate(dataServer.message_update, dataServer.forceUpdate).show();
+//        }
 
     }
 
@@ -1007,7 +1010,7 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
 
         libraryDatas.clear();
         Map<Integer, GameInfo> map = GameDataManager.getInstance().getRawData();
-        if (!hide_game)
+        if (!hide_game || true)
             for (int id : map.keySet()) {
                 libraryDatas.add(map.get(id));
             }
@@ -1076,7 +1079,21 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
+    public boolean onGameSelected(GameDescription game, int slot) {
+        Intent intent = new Intent(this, NesEmulatorActivity.class);
+        intent.putExtra(EmulatorActivity.EXTRA_GAME, game);
+        intent.putExtra(EmulatorActivity.EXTRA_SLOT, slot);
+        intent.putExtra(EmulatorActivity.EXTRA_FROM_GALLERY, true);
+        startActivity(intent);
+        return true;
+    }
+
     public void openSlideBar(GameInfo game) {
+
+        GameDescription des = new GameDescription();
+        des.name = game.name;
+        des.path = game.localFile;
+        onGameSelected(des,0);
         //GameInfo game = GameDataManager.getInstance().getRawData().get(gameID);
 //        if(game.uerData == null)
 //            game.uerData = new RomHeader(game.localFile);
@@ -1432,13 +1449,13 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
             imgData.imageURL = listGame.get(position).artUrl;
             imgData.imageSavePath = listGame.get(position).artPath;
 
-//        if(holder.bitmapTask != null)
-//            holder.bitmapTask.cancel(true);
-//        if(!hide_icon)
-//        {
-//            holder.bitmapTask = new BitmapTask(mContext,imgData,holder.imgView);
-//            holder.bitmapTask.execute();
-//        }
+        if(holder.bitmapTask != null)
+            holder.bitmapTask.cancel(true);
+            if(!hide_icon || true)
+            {
+                holder.bitmapTask = new BitmapTask(mContext,imgData,holder.imgView);
+                holder.bitmapTask.execute();
+            }
             imageResizer.cancelWork(holder.imgView);
             holder.imgView.setImageDrawable(default_cover);
             if (!hide_icon)
@@ -1505,11 +1522,18 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
 
         @Override
         protected String doInBackground(String... params) {
-            if (!new File(mBitmapPath).exists()) {
-                downloadIMG(imgData);
+//            if (!new File(mBitmapPath).exists()) {
+//                downloadIMG(imgData);
+//            }
+//            if (new File(mBitmapPath).exists()) {
+//                mArtBitmap = new BitmapDrawable(mContext.getResources(), mBitmapPath);
+//            }
+            try {
+                mArtBitmap = new BitmapDrawable(mContext.getAssets().open(mBitmapURL));
+
             }
-            if (new File(mBitmapPath).exists()) {
-                mArtBitmap = new BitmapDrawable(mContext.getResources(), mBitmapPath);
+            catch (IOException e){
+                e.printStackTrace();
             }
 
             return null;

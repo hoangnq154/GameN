@@ -35,11 +35,6 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.demokey
-            externalNativeBuild {
-                cmake {
-                    cppFlags.add('-DNATIVE_LOG')
-                }
-            }
         }
         release {
             minifyEnabled true
@@ -50,9 +45,6 @@ android {
         }
     }
     externalNativeBuild {
-        cmake {
-            path 'src/main/cpp/CMakeLists.txt'
-        }
     }
     lintOptions {
         abortOnError false

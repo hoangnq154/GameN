@@ -251,7 +251,7 @@ public class DataServerManager {
 			gameInfo.url = "https://raw.githubusercontent.com/hoangnq154/n64_lock/master/rom_update_server";
 			gameInfo.name = "ROM DATA SERVER";
 			gameInfo.fileName = "rom_data_server";
-			gameInfo.localFile = StorageHelper.getDefaultROMsDIR() + "rom_update_server";
+			gameInfo.localFile = StorageHelper.getBaseDIR() + "rom_update_server";
 			
 			DownloadROMThread thread = new DownloadROMThread(gameInfo, listener);
 			thread.start();
