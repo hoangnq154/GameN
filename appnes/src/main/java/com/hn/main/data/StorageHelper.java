@@ -53,7 +53,11 @@ public class StorageHelper {
 		{
 			file.mkdirs();
 		}
-			
+		file = new File(rom_dir+"saves/");
+		if(!file.exists())
+		{
+			file.mkdirs();
+		}
 	
 	}
 
@@ -75,7 +79,7 @@ public class StorageHelper {
 	{
 		return rom_dir+"promoarts/";
 	}
-	
+	public static String getSaveDIR(){return rom_dir +"saves/";}
 	public static boolean is_do()
 	{
 

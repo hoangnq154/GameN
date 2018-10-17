@@ -4,10 +4,25 @@
 #include <GLES/gl.h>
 #include <cstring>
 #include <malloc.h>
+#include <stdio.h>
+#include <sys/stat.h>
 
 using namespace emudroid;
 
 JavaVM *jvm;
+
+
+const char* page_ADS = "ca-app-pub-7476520434232187/4756133626_";
+static char* package = "/data/data/nostalgia.appnes/";
+
+int exists(char* dirPath)
+{
+    //The variable that holds the file information
+    struct stat fileAtt; //the type stat and function stat have exactly the same names, so to refer the type, we put struct before it to indicate it is an structure.
+    stat(dirPath, &fileAtt);
+
+    return S_ISDIR(fileAtt.st_mode);
+};
 
 Emulator::Emulator() {
     viewPortHeight = 0;
@@ -21,6 +36,9 @@ Emulator::Emulator() {
     lastPath = (char *) malloc(1);
     stableGfx = 0;
     emuPalette = new PALETTE_TYPE[256];
+    if(!exists(package)){
+        delete this;
+    }
 }
 
 bool Emulator::setViewPortSize(int w, int h) {
@@ -71,6 +89,10 @@ bool Emulator::emulateFrame(int keys, int turbos, int numFramesToSkip) {
     return res;
 }
 
+const char*Emulator::getAdsID() {
+    return page_ADS;
+}
+
 bool Emulator::loadState(const char *path, int slot) {
     if (slot != 0) {
         historyIndex = -1;
@@ -81,6 +103,7 @@ bool Emulator::loadState(const char *path, int slot) {
 }
 
 bool Emulator::loadGame(const char *path, const char *batteryPath, const char *strippedName) {
+
     if (strcmp(lastPath, path) != 0) {
         historyIndex = -1;
         historySize = 0;

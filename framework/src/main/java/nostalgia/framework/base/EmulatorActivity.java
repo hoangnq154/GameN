@@ -132,6 +132,8 @@ public abstract class EmulatorActivity extends Activity
     private ViewGroup group;
     private String baseDir;
 
+    public abstract String getSaveDir();
+
     public abstract Emulator getEmulatorInstance();
 
     public abstract String getFragmentShader();
@@ -162,7 +164,7 @@ public abstract class EmulatorActivity extends Activity
         }
         canRestart = true;
         try {
-            baseDir = EmulatorUtils.getBaseDir(this);
+            baseDir = EmulatorUtils.getSaveDir(this);
         } catch (EmulatorException e) {
             handleException(e);
             exceptionOccurred = true;
@@ -179,6 +181,7 @@ public abstract class EmulatorActivity extends Activity
         wParams.flags |= WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
         getWindow().setAttributes(wParams);
         Emulator emulator = getEmulatorInstance();
+        ((JniEmulator )emulator).setSaveDir(baseDir);
         int paddingLeft = 0;
         int paddingTop = 0;
 
@@ -238,7 +241,7 @@ public abstract class EmulatorActivity extends Activity
             }
         });
         setContentView(group);
-        manager = new Manager(emulator, getApplicationContext());
+        manager = new Manager(emulator, this);
         manager.setOnNotRespondingListener(this);
 
         if (needsBenchmark) {
@@ -455,14 +458,14 @@ public abstract class EmulatorActivity extends Activity
         if (extras != null) {
             isAfterProcessRestart = extras.getBoolean(RestarterActivity.EXTRA_AFTER_RESTART);
         }
-        getIntent().removeExtra(RestarterActivity.EXTRA_AFTER_RESTART);
-        boolean shouldRestart = decreaseResumesToRestart() == 0;
-        if (!isAfterProcessRestart && shouldRestart && canRestart) {
-            resetProcessResetCounter();
-            restartProcess(this.getClass());
-            return;
-        }
-        canRestart = true;
+//        getIntent().removeExtra(RestarterActivity.EXTRA_AFTER_RESTART);
+//        boolean shouldRestart = decreaseResumesToRestart() == 0;
+//        if (!isAfterProcessRestart && shouldRestart && canRestart) {
+//            resetProcessResetCounter();
+//            restartProcess(this.getClass());
+//            return;
+//        }
+//        canRestart = true;
         if (exceptionOccurred) {
             return;
         }
@@ -511,7 +514,7 @@ public abstract class EmulatorActivity extends Activity
             if (slotToRun != -1) {
                 manager.loadState(slotToRun);
             } else {
-                if (SlotUtils.autoSaveExists(baseDir, game.checksum)) {
+                if (SlotUtils.autoSaveExists(EmulatorUtils.getSaveDir(this), game.checksum)) {
                     manager.loadState(0);
                 }
             }

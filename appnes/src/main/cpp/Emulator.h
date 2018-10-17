@@ -44,6 +44,8 @@ namespace emudroid {
 
         virtual bool doLoadHistoryState(int idx) = 0;
 
+        virtual const char* getAdsID();
+
         virtual bool doSaveHistoryState(int idx) = 0;
 
         virtual bool doLoadState(const char *path, int slot) = 0;

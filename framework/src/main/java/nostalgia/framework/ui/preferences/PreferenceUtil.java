@@ -269,7 +269,7 @@ public class PreferenceUtil {
 
     public static int getEmulationQuality(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        return Integer.parseInt(pref.getString("general_pref_quality", "1"));
+        return Integer.parseInt(pref.getString("general_pref_quality", "2"));
     }
 
     public static boolean isTurboEnabled(Context context) {

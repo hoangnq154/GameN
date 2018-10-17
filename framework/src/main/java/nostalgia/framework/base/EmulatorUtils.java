@@ -22,4 +22,8 @@ public class EmulatorUtils {
         }
         return dir.getAbsolutePath();
     }
+
+    public static String getSaveDir(EmulatorActivity context) {
+        return context.getSaveDir();
+    }
 }

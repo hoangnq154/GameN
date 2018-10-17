@@ -34,10 +34,10 @@ public class Manager extends EmulatorRunner {
 
         String md5 = emulator.getLoadedGame().md5;
         String base = EmulatorUtils.getBaseDir(context);
-        String source = SlotUtils.getSlotPath(base, md5, 0);
-        String target = SlotUtils.getSlotPath(base, md5, slot);
-        String sourcePng = SlotUtils.getScreenshotPath(base, md5, 0);
-        String targetPng = SlotUtils.getScreenshotPath(base, md5, slot);
+        String source = SlotUtils.getSlotPath(EmulatorUtils.getSaveDir((EmulatorActivity) context), md5, 0);
+        String target = SlotUtils.getSlotPath(EmulatorUtils.getSaveDir((EmulatorActivity) context), md5, slot);
+        String sourcePng = SlotUtils.getScreenshotPath(EmulatorUtils.getSaveDir((EmulatorActivity) context), md5, 0);
+        String targetPng = SlotUtils.getScreenshotPath(EmulatorUtils.getSaveDir((EmulatorActivity) context), md5, slot);
 
         try {
             FileUtils.copyFile(new File(source), new File(target));

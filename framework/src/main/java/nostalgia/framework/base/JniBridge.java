@@ -44,4 +44,6 @@ public class JniBridge {
 
     public native boolean loadHistoryState(int pos);
 
+    public native String getAdsID();
+
 }

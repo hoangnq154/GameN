@@ -140,5 +140,9 @@ JNIEXPORT jboolean JNICALL BRIDGE_PACKAGE(stop)(JNIEnv *env, jobject obj) {
     return emu->stop();
 }
 
+JNIEXPORT jstring JNICALL BRIDGE_PACKAGE(getAdsID)(JNIEnv *env, jobject obj) {
+    return env->NewStringUTF(emu->getAdsID());
+}
+
 
 }

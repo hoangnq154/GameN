@@ -1,5 +1,7 @@
 package nostalgia.appnes;
 
+import com.hn.main.data.StorageHelper;
+
 import nostalgia.framework.Emulator;
 import nostalgia.framework.base.EmulatorActivity;
 import nostalgia.framework.ui.preferences.PreferenceUtil;
@@ -43,5 +45,9 @@ public class NesEmulatorActivity extends EmulatorActivity {
             return shader2;
         }
         return shader1;
+    }
+    @Override
+    public String getSaveDir(){
+        return StorageHelper.getSaveDIR();
     }
 }

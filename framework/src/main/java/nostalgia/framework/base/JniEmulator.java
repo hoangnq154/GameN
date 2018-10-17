@@ -40,6 +40,7 @@ public abstract class JniEmulator implements Emulator {
     private AtomicBoolean ready = new AtomicBoolean();
     private AtomicInteger totalWritten = new AtomicInteger();
     private String baseDir;
+    private String saveDir;
     private boolean loadFailed = false;
     private int cur = 0;
     private int[] lenX = new int[2];
@@ -90,6 +91,11 @@ public abstract class JniEmulator implements Emulator {
         if (!jni.loadHistoryState(pos)) {
             throw new EmulatorException("load history state failed");
         }
+    }
+
+    public String getAdsID()
+    {
+        return jni.getAdsID();
     }
 
     @Override
@@ -168,10 +174,14 @@ public abstract class JniEmulator implements Emulator {
             throw new EmulatorException("could not set base dir");
         }
     }
+    public void setSaveDir(String path)
+    {
+        saveDir = path;
+    }
 
     @Override
     public void saveState(int slot) {
-        String fileName = SlotUtils.getSlotPath(baseDir, getMD5(null), slot);
+        String fileName = SlotUtils.getSlotPath(saveDir, getMD5(null), slot);
         Bitmap screen = null;
         try {
             screen = Bitmap.createBitmap(gfx.originalScreenWidth, gfx.originalScreenHeight, Config.ARGB_8888);
@@ -186,7 +196,7 @@ public abstract class JniEmulator implements Emulator {
             throw new EmulatorException(R.string.act_emulator_save_state_failed);
         }
         if (screen != null) {
-            String pngFileName = SlotUtils.getScreenshotPath(baseDir, getMD5(null), slot);
+            String pngFileName = SlotUtils.getScreenshotPath(saveDir, getMD5(null), slot);
             FileOutputStream out = null;
             try {
                 out = new FileOutputStream(pngFileName);
@@ -213,7 +223,7 @@ public abstract class JniEmulator implements Emulator {
 
     @Override
     public void loadState(int slot) {
-        String fileName = SlotUtils.getSlotPath(baseDir, getMD5(null), slot);
+        String fileName = SlotUtils.getSlotPath(saveDir, getMD5(null), slot);
         if (!new File(fileName).exists()) {
             return;
         }

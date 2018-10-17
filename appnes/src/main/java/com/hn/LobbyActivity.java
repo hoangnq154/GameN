@@ -20,6 +20,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -89,35 +90,23 @@ import java.util.Set;
 import javax.net.ssl.HttpsURLConnection;
 
 import info.guardianproject.netcipher.NetCipher;
+import nostalgia.appnes.NesEmulator;
 import nostalgia.appnes.NesEmulatorActivity;
 import nostalgia.appnes.R;
 import nostalgia.framework.base.EmulatorActivity;
+import nostalgia.framework.base.EmulatorUtils;
+import nostalgia.framework.base.SlotUtils;
 import nostalgia.framework.ui.gamegallery.GameDescription;
+import nostalgia.framework.ui.preferences.GamePreferenceActivity;
+import nostalgia.framework.ui.preferences.GamePreferenceFragment;
+import nostalgia.framework.utils.EmuUtils;
 
-//import x0163.n64.nes.snes.gba.gbc.mame.R;
-//import info.guardianproject.netcipher.NetCipher;
-//import paulscode.android.mupen64plusae.billing.IabHelper;
-//import paulscode.android.mupen64plusae.billing.IabResult;
-//import paulscode.android.mupen64plusae.billing.Inventory;
-//import paulscode.android.mupen64plusae.billing.Purchase;
-//import paulscode.android.mupen64plusae.dialog.ConfirmationDialog;
-//import paulscode.android.mupen64plusae.dialog.Popups;
-//import paulscode.android.mupen64plusae.persistent.AppData;
-//import paulscode.android.mupen64plusae.persistent.ConfigFile;
-//import paulscode.android.mupen64plusae.persistent.GamePrefs;
-//import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
-//import paulscode.android.mupen64plusae.task.ComputeMd5Task;
-//import paulscode.android.mupen64plusae.util.FileUtil;
-//import paulscode.android.mupen64plusae.util.LocaleContextWrapper;
-//import paulscode.android.mupen64plusae.util.Notifier;
-//import paulscode.android.mupen64plusae.util.RomDatabase;
-//import paulscode.android.mupen64plusae.util.RomHeader;
 
 /**
  * Created by hoangnguyen on 3/2/18.
  */
 
-public class LobbyActivity extends AppCompatActivity /*implements MenuListView.OnClickListener,GameSidebar.GameSidebarActionHandler*/ {
+public class LobbyActivity extends AppCompatActivity implements MenuListView.OnClickListener,GameSidebar.GameSidebarActionHandler {
 
     private static final String STATE_QUERY = "query";
     private static final String STATE_SIDEBAR = "sidebar";
@@ -127,7 +116,7 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
     private static final String STATE_EXTRACT_ROM_FRAGMENT = "STATE_EXTRACT_ROM_FRAGMENT";
     private static final String STATE_GALLERY_REFRESH_NEEDED = "STATE_GALLERY_REFRESH_NEEDED";
     private static final String STATE_GAME_STARTED_EXTERNALLY = "STATE_GAME_STARTED_EXTERNALLY";
-    private static final String STATE_RESTART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
+    private static final String STATE_RESTxART_CONFIRM_DIALOG = "STATE_RESTART_CONFIRM_DIALOG";
     private static final String STATE_CLEAR_CONFIRM_DIALOG = "STATE_CLEAR_CONFIRM_DIALOG";
     private static final String STATE_REMOVE_FROM_LIBRARY_DIALOG = "STATE_REMOVE_FROM_LIBRARY_DIALOG";
     private static final String STATE_DONATION_DIALOG = "STATE_DONATION_DIALOG";
@@ -149,8 +138,8 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
     private String mSearchQuery = "";
 
     private DrawerLayout mDrawerLayout = null;
-    //    private MenuListView mMenu = null;
-//    private GameSidebar mGameSidebar;
+    private MenuListView mMenu = null;
+    private GameSidebar mGameSidebar;
     private ImageResizer mImageResizer;
     MyAdapter adapter;
 
@@ -161,7 +150,7 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
     DataServerManager dataServer;
 
 
-    public GameInfo selectedGame;
+    public GameDescription selectedGame;
 
 //    private ScanRomsFragment mCacheRomInfoFragment = null;
 //    private ExtractTexturesFragment mExtractTexturesFragment = null;
@@ -219,27 +208,27 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
 
         //setup menu
         mDrawerLayout = findViewById(R.id.lobbyDrawerLayout);
-//        mMenu = findViewById(R.id.drawerNavigation);
-//        mMenu.setMenuResource(R.menu.gallery_drawer);
-//        mMenu.setBackground(new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency));
-//        mMenu.setOnClickListener(this);
-//
-//        // Configure the game information drawer
-//        mGameSidebar = findViewById(R.id.gameSidebar);
-//        mGameSidebar.setBackground(new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency));
-//
-//        // Handle events from the side bar
-//        mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
+        mMenu = findViewById(R.id.drawerNavigation);
+        mMenu.setMenuResource(R.menu.gallery_drawer);
+        mMenu.setBackground(new DrawerDrawable(150));
+        mMenu.setOnClickListener(this);
+
+        // Configure the game information drawer
+        mGameSidebar = findViewById(R.id.gameSidebar);
+        mGameSidebar.setBackground(new DrawerDrawable(150));
+
+        // Handle events from the side bar
+        mGameSidebar.setActionHandler(this, R.menu.gallery_game_drawer);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("N64 Emulator");
+        toolbar.setTitle("FC NES");
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, 0, 0) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 // Hide the game information sidebar
-//                mMenu.setVisibility(View.VISIBLE);
-//                mGameSidebar.setVisibility(View.GONE);
+                mMenu.setVisibility(View.VISIBLE);
+                mGameSidebar.setVisibility(View.GONE);
                 recyclerView.requestFocus();
 
                 super.onDrawerClosed(drawerView);
@@ -276,8 +265,9 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
         refreshLibrary();
 //        mMenu.setPremium(dataServer.isPremium);
 
-//        admobHelper = new AdmobHelper(this, dataServer);
-        //admobHelper.loadPage(AdmobHelper.getID());
+        admobHelper = new AdmobHelper(this, dataServer);
+        String page_id = NesEmulator.getInstance().getAdsID();
+        admobHelper.loadPage(page_id);
 
 //        if(hide_game)
 //            Notifier.showToast2(this,"Please add game from Menu");
@@ -399,51 +389,51 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate( R.menu.gallery_activity_2, menu );
-//        this.topMenu = menu;
-//        //this.topMenu.setGroupVisible(0,!hide_game);
-//        final MenuItem searchItem = menu.findItem( R.id.menuItem_search );
-//
-//        searchItem.setOnActionExpandListener( new MenuItem.OnActionExpandListener()
-//        {
-//            @Override
-//            public boolean onMenuItemActionCollapse( MenuItem item )
-//            {
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionExpand( MenuItem item )
-//            {
-//                return true;
-//            }
-//        } );
-//
-//        mSearchView = (SearchView) searchItem.getActionView();
-//        mSearchView.setOnQueryTextListener( new SearchView.OnQueryTextListener()
-//        {
-//            @Override
-//            public boolean onQueryTextSubmit( String query )
-//            {
-//
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange( String query )
-//            {
-//                mSearchQuery = query;
-//                refreshLibrary();
-//                return false;
-//            }
-//        } );
-//
-//        if( !"".equals( mSearchQuery ) )
-//        {
-//            final String query = mSearchQuery;
-//            searchItem.expandActionView();
-//            mSearchView.setQuery( query, true );
-//        }
+        getMenuInflater().inflate( R.menu.gallery_activity_2, menu );
+        this.topMenu = menu;
+        //this.topMenu.setGroupVisible(0,!hide_game);
+        final MenuItem searchItem = menu.findItem( R.id.menuItem_search );
+
+        searchItem.setOnActionExpandListener( new MenuItem.OnActionExpandListener()
+        {
+            @Override
+            public boolean onMenuItemActionCollapse( MenuItem item )
+            {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand( MenuItem item )
+            {
+                return true;
+            }
+        } );
+
+        mSearchView = (SearchView) searchItem.getActionView();
+        mSearchView.setOnQueryTextListener( new SearchView.OnQueryTextListener()
+        {
+            @Override
+            public boolean onQueryTextSubmit( String query )
+            {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange( String query )
+            {
+                mSearchQuery = query;
+                refreshLibrary();
+                return false;
+            }
+        } );
+
+        if( !"".equals( mSearchQuery ) )
+        {
+            final String query = mSearchQuery;
+            searchItem.expandActionView();
+            mSearchView.setQuery( query, true );
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -595,10 +585,10 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
         moveTaskToBack(true);
     }
 
-//    @Override
-//    public boolean onKey(View view, int i, KeyEvent keyEvent) {
-//        return false;
-//    }
+    @Override
+    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+        return false;
+    }
 
 
     public boolean DeleteRecursive(File fileOrDirectory) {
@@ -611,184 +601,64 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId())
-//        {
-//            case R.id.menuItem_refreshRoms:
-//                ActivityHelper.startRomScanActivity(this);
+        switch (item.getItemId())
+        {
+            case R.id.menuItem_refreshRoms:
+                //ActivityHelper.startRomScanActivity(this);
+                return true;
+            case R.id.menuItem_library:
+                if(dataServer.isFake)
+                {
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
+                else
+                {
+                    pressAddAllGame();
+                }
+                return true;
+//            case R.id.menuItem_settings:
+//            {
+//                Intent i = new Intent(this, GamePreferenceActivity.class);
+//                i.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
+//
+//                startActivity(i);
+//
 //                return true;
-//            case R.id.menuItem_library:
-//                if(dataServer.isFake)
-//                {
-//                    mDrawerLayout.closeDrawer(GravityCompat.START);
-//                }
-//                else
-//                {
-//                    pressAddAllGame();
-//                }
-//                return true;
-//            case R.id.menuItem_categoryLibrary:
-//                ActivityHelper.startLibraryPrefsActivity( this );
-//                return true;
-//            case R.id.menuItem_categoryDisplay:
-//                ActivityHelper.startDisplayPrefsActivity( this );
-//                return true;
-//            case R.id.menuItem_categoryAudio:
-//                ActivityHelper.startAudioPrefsActivity( this );
-//                return true;
-//            case R.id.menuItem_categoryTouchscreen:
-//                ActivityHelper.startTouchscreenPrefsActivity( this );
-//                return true;
-//            case R.id.menuItem_categoryInput:
-//                ActivityHelper.startInputPrefsActivity( this );
-//                return true;
-//            case R.id.menuItem_categoryData:
-//                ActivityHelper.startDataPrefsActivity( this );
-//                return true;
-//            case R.id.menuItem_emulationProfiles:
-//                ActivityHelper.startManageEmulationProfilesActivity(this);
-//                return true;
-//            case R.id.menuItem_touchscreenProfiles:
-//                ActivityHelper.startManageTouchscreenProfilesActivity(this);
-//                return true;
-//            case R.id.menuItem_controllerProfiles:
-//                ActivityHelper.startManageControllerProfilesActivity(this);
-//                return true;
-////        case R.id.menuItem_faq:
-////            Popups.showFaq(this);
-////            return true;
-////        case R.id.menuItem_helpForum:
-////            ActivityHelper.launchUri(this, R.string.uri_forum);
-////            return true;
-////        case R.id.menuItem_controllerDiagnostics:
-////            ActivityHelper.startDiagnosticActivity(this);
-////            return true;
-////        case R.id.menuItem_reportBug:
-////            ActivityHelper.launchUri(this, R.string.uri_bugReport);
-////            return true;
-//            case R.id.menuItem_appVersion:
+//            }
+
+            case R.id.menuItem_appVersion:
 //                Popups.showAppVersion(this);
-//                return true;
-//            case R.id.menuItem_logcat:
-//                ActivityHelper.startLogcatActivity(this);
-//                return true;
-//            case R.id.menuItem_hardwareInfo:
-//                Popups.showHardwareInfo(this);
-//                return true;
-//            case R.id.menuItem_credits:
-//                //ActivityHelper.launchUri(GalleryActivity.this, R.string.uri_credits);
-//                openURLUpdate();
+                return true;
+            case R.id.menuItem_credits:
+                //ActivityHelper.launchUri(GalleryActivity.this, R.string.uri_credits);
+                openURLUpdate();
+
+                return true;
+//        case R.id.menuItem_donate: {
 //
-//                return true;
-////        case R.id.menuItem_localeOverride:
-////            mGlobalPrefs.changeLocale(this);
-////            return true;
-//            case R.id.menuItem_extract:
-//                ActivityHelper.starExtractTextureActivity(this);
-//                return true;
-//            case R.id.menuItem_clear:
-//            {
-//                String title = getString( R.string.confirm_title );
-//                String message = getString( R.string.confirmClearData_message );
-//
-//                ConfirmationDialog confirmationDialog =
-//                        ConfirmationDialog.newInstance(CLEAR_CONFIRM_DIALOG_ID, title, message);
-//
-//                FragmentManager fm = getSupportFragmentManager();
-//                confirmationDialog.show(fm, STATE_CLEAR_CONFIRM_DIALOG);
-//            }
+//            if(mIapHelper != null && !mDonationDialogBeingShown)
+//                showInAppPurchases();
+//        }
 //            return true;
-////        case R.id.menuItem_donate: {
-////
-////            if(mIapHelper != null && !mDonationDialogBeingShown)
-////                showInAppPurchases();
-////        }
-////            return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void launchGameOnCreation(GameInfo gameInfo, boolean restart) {
-
-        if (new File(gameInfo.localFile).exists()) {
-//            if(gameInfo.uerData == null)
-//                gameInfo.uerData = new RomHeader(gameInfo.localFile);
-//            if(gameInfo.romDetail == null)
-//                gameInfo.romDetail = RomDatabase.getInstance().lookupByMd5(gameInfo.md5);
-//            final RomHeader header = (RomHeader)gameInfo.uerData;
-//            launchGameActivity(gameInfo,gameInfo.localFile, null, gameInfo.md5, header.crc, header.name,
-//                    header.countryCode.getValue(), gameInfo.artPath, gameInfo.romDetail.goodName, restart);
-//            int count_open_app = dataServer.getIntForKey(getApplicationContext(), Constant.KEY_STORAGE_OPEN_APP, 0);
-//            if(count_open_app < 100)
-//            {
-//                count_open_app++;
-//                dataServer.saveIntForKey(getApplicationContext(),Constant.KEY_STORAGE_OPEN_APP,count_open_app);
-//            }
+            default:
+                return super.onOptionsItemSelected(item);
         }
+//        return super.onOptionsItemSelected(item);
     }
 
-    public void launchGameActivity(GameInfo gameInfo, String romPath, String zipPath, String romMd5, String romCrc,
-                                   String romHeaderName, byte romCountryCode, String romArtPath, String romGoodName, boolean isRestarting) {
-//        Log.i("GalleryActivity", "launchGameActivity");
-//
-//        // Make sure that the storage is accessible
-//        if (!mAppData.isSdCardAccessible()) {
-//            Log.e("GalleryActivity", "SD Card not accessible");
-//            Notifier.showToast(this, R.string.toast_sdInaccessible);
-//
-//            mAppData.putAssetVersion(0);
-//            ActivityHelper.startSplashActivity(this);
-//            finish();
-//            return;
-//        }
-//
-//        // Update the ConfigSection with the new value for lastPlayed
-//        final String lastPlayed = Integer.toString((int) (new Date().getTime() / 1000));
-//        final ConfigFile config = new ConfigFile(mGlobalPrefs.romInfoCache_cfg);
-//        File romFileName = new File(romPath);
-//
-//        String romLegacySaveFileName;
-//
-//        //Convoluted way of moving legacy save file names to the new format
-//        if (zipPath != null) {
-//            File zipFile = new File(zipPath);
-//            romLegacySaveFileName = zipFile.getName();
-//        } else {
-//            File romFile = new File(romPath);
-//            romLegacySaveFileName = romFile.getName();
-//        }
-//
-//
-//        config.put(romMd5, "lastPlayed", lastPlayed);
-//        config.save();
-//
-//        ///Drawer layout can be null if this method is called from onCreate
-//        if (mDrawerLayout != null) {
-//            //Close drawer without animation
-//            mDrawerLayout.closeDrawer(GravityCompat.START, false);
-//        }
-//        //mRefreshNeeded = true;
-//
-//        //mSelectedItem = null;
-//
-//        if (romFileName.exists()) {
-//            // Notify user that the game activity is starting
-//            String text = gameInfo.name +" is starting, please wait...";
-//            Notifier.showToast(this,text);
-//            // Launch the game activity
-//            ActivityHelper.startGameActivity(this, romPath, romMd5, romCrc, romHeaderName, romCountryCode,
-//                    romArtPath, romGoodName, romLegacySaveFileName, isRestarting);
-//        } else {
-//            if (config.get(romMd5) != null) {
-//                if (!TextUtils.isEmpty(zipPath)) {
-////					mExtractRomFragment.ExtractRom(zipPath, mGlobalPrefs.unzippedRomsDir, romPath, romMd5, romCrc,
-////							romHeaderName, romCountryCode, romArtPath, romGoodName, romLegacySaveFileName,
-////							isRestarting);
-//                }
-//            }
-//        }
+    public void launchGameOnCreation(GameDescription gameInfo, boolean restart) {
+
+        int count_open_app = dataServer.getIntForKey(getApplicationContext(), Constant.KEY_STORAGE_OPEN_APP, 0);
+        if(count_open_app < 100)
+        {
+            count_open_app++;
+            dataServer.saveIntForKey(getApplicationContext(),Constant.KEY_STORAGE_OPEN_APP,count_open_app);
+        }
+
+        onGameSelected(gameInfo,0);
     }
+
+
 
     public android.app.Dialog createDialogPromotion(final GameInfo infoPromo, final boolean need_quit) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -831,10 +701,10 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
         return builder.create();
     }
 
-//    @Override
-//    public void onClick(MenuItem menuItem) {
-//        this.onOptionsItemSelected( menuItem );
-//    }
+    @Override
+    public void onClick(MenuItem menuItem) {
+        this.onOptionsItemSelected( menuItem );
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -926,8 +796,8 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
     private void setPremium(boolean premium) {
         if (dataServer != null) {
             dataServer.savePremium(getApplicationContext(), premium);
-//            mMenu.setPremium(premium);
-//            mGameSidebar.setPremium(premium);
+            mMenu.setPremium(premium);
+            mGameSidebar.setPremium(premium);
         }
     }
 
@@ -1093,40 +963,29 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
         GameDescription des = new GameDescription();
         des.name = game.name;
         des.path = game.localFile;
-        onGameSelected(des,0);
-        //GameInfo game = GameDataManager.getInstance().getRawData().get(gameID);
-//        if(game.uerData == null)
-//            game.uerData = new RomHeader(game.localFile);
-//        RomHeader header = (RomHeader)game.uerData;
-//        selectedGame = game;
-//
-//        // Show the game info sidebar
+        des.checksum = EmuUtils.getMD5Checksum(new File(game.localFile));
+        selectedGame = des;
+
+        onGameSelected(selectedGame,0);
+
 //        mMenu.setVisibility(View.GONE);
 //        mGameSidebar.setVisibility(View.VISIBLE);
 //        mGameSidebar.scrollTo(0, 0);
 //
+//        try {
+//            mGameSidebar.setImage(new BitmapDrawable(getResources(),getAssets().open(game.artUrl)));
 //
-//        if(!new File(game.artPath).exists())
-//            mGameSidebar.setImage(null);
-//        else
-//            mGameSidebar.setImage(new BitmapDrawable(getResources(),game.artPath));
+//        }
+//        catch (IOException e){
+//            e.printStackTrace();
+//        }
+//
 //
 //        // Set the game title
 //        mGameSidebar.setTitle(game.name);
 //
-//        // If there are no saves for this game, disable the resume
-//        // option
-//        final String gameDataPath = GamePrefs.getGameDataPath(game.md5, header.name,
-//                header.countryCode.toString(), mAppData);
-//        final String autoSavePath = gameDataPath + "/" + GamePrefs.AUTO_SAVES_DIR + "/";
 //
-//        final File autoSavePathFile = new File(autoSavePath);
-//        final File[] allFilesInSavePath = autoSavePathFile.listFiles();
-//
-//        //No saves, go ahead and remove it
-//        final boolean visible = allFilesInSavePath != null && allFilesInSavePath.length != 0 &&
-//                mGlobalPrefs.maxAutoSaves > 0;
-//
+//        boolean visible = SlotUtils.autoSaveExists(EmulatorUtils.getBaseDir(getApplicationContext()), des.checksum);
 //
 //        if (visible)
 //        {
@@ -1153,66 +1012,58 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
 //        mGameSidebar.setPremium(dataServer.isPremium);
     }
 
-//    @Override
-//    public void onGameSidebarAction(MenuItem menuItem) {
-//        if(selectedGame == null)
-//            return;
-////        switch( menuItem.getItemId() )
-////        {
-////            case R.id.menuItem_resume:
-////                launchGameOnCreation(selectedGame,false);
-////                break;
-////            case R.id.menuItem_restart:
-////                //Don't show the prompt if this is the first time we start a game
-////                launchGameOnCreation(selectedGame,true);
-////
-////
-////                break;
-////            case R.id.menuItem_settings:
-////            {
-////                String romLegacySaveFileName;
-////                romLegacySaveFileName = new File(selectedGame.localFile).getName();
-////                RomHeader header = (RomHeader)selectedGame.uerData;
-////
-////
-////                ActivityHelper.startGamePrefsActivity( LobbyActivity.this, selectedGame.localFile,
-////                        selectedGame.md5, header.crc, header.name, selectedGame.romDetail.goodName, header.countryCode.getValue(),
-////                        romLegacySaveFileName);
-////                break;
-////
-////            }
-////            case R.id.menuItem_remove:
-////            {
-////
-////
-//////                final CharSequence title = getText( R.string.confirm_title );
-//////                final CharSequence message = getText( R.string.confirmRemoveFromLibrary_message );
-//////
-//////                final ConfirmationDialog confirmationDialog =
-//////                        ConfirmationDialog.newInstance(REMOVE_FROM_LIBRARY_DIALOG_ID, title.toString(), message.toString());
-//////
-//////                final FragmentManager fm = getSupportFragmentManager();
-//////                confirmationDialog.show(fm, STATE_REMOVE_FROM_LIBRARY_DIALOG);
-////
-////                if(dataServer.isPremium)
-////                {
-////                    mGameSidebar.setPremium(true);
-////                }
-////                else if(iabHelper != null)
-////                {
-////                    try {
-////                        iabHelper.launchPurchaseFlow(this, SKU_PREMIUM, PURCHASE_REQUEST_CODE, mPurchaseFinishedListener, "");
-////                    }
-////                    catch (IabHelper.IabAsyncInProgressException e)
-////                    {
-////                        e.printStackTrace();
-////                    }
-////                }
-////            }
-////            default:
-////        }
-//    }
-//}
+    @Override
+    public void onGameSidebarAction(MenuItem menuItem) {
+        if(selectedGame == null)
+            return;
+        switch( menuItem.getItemId() )
+        {
+            case R.id.menuItem_resume:
+                launchGameOnCreation(selectedGame,false);
+                break;
+            case R.id.menuItem_restart:
+                //Don't show the prompt if this is the first time we start a game
+                launchGameOnCreation(selectedGame,true);
+
+
+                break;
+            case R.id.menuItem_settings:
+            {
+
+                break;
+
+            }
+            case R.id.menuItem_remove:
+            {
+
+//                final CharSequence title = getText( R.string.confirm_title );
+//                final CharSequence message = getText( R.string.confirmRemoveFromLibrary_message );
+//
+//                final ConfirmationDialog confirmationDialog =
+//                        ConfirmationDialog.newInstance(REMOVE_FROM_LIBRARY_DIALOG_ID, title.toString(), message.toString());
+//
+//                final FragmentManager fm = getSupportFragmentManager();
+//                confirmationDialog.show(fm, STATE_REMOVE_FROM_LIBRARY_DIALOG);
+//
+//                if(dataServer.isPremium)
+//                {
+//                    mGameSidebar.setPremium(true);
+//                }
+//                else if(iabHelper != null)
+//                {
+//                    try {
+//                        iabHelper.launchPurchaseFlow(this, SKU_PREMIUM, PURCHASE_REQUEST_CODE, mPurchaseFinishedListener, "");
+//                    }
+//                    catch (IabHelper.IabAsyncInProgressException e)
+//                    {
+//                        e.printStackTrace();
+//                    }
+//                }
+            }
+            default:
+        }
+    }
+
 
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -1529,7 +1380,7 @@ public class LobbyActivity extends AppCompatActivity /*implements MenuListView.O
 //                mArtBitmap = new BitmapDrawable(mContext.getResources(), mBitmapPath);
 //            }
             try {
-                mArtBitmap = new BitmapDrawable(mContext.getAssets().open(mBitmapURL));
+                mArtBitmap = new BitmapDrawable(mContext.getResources(),mContext.getAssets().open(mBitmapURL));
 
             }
             catch (IOException e){

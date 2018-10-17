@@ -48,6 +48,6 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
         GeneralPreferenceActivity.initInputMethodPreference(inputMethod, getActivity());
         PreferenceCategory otherCat = (PreferenceCategory) findPreference("pref_others_cat");
         Preference aboutPreference = otherCat.findPreference("pref_game_others_about_game");
-        GeneralPreferenceActivity.initAboutGamePreference(aboutPreference, getActivity());
+//        GeneralPreferenceActivity.initAboutGamePreference(aboutPreference, getActivity());
     }
 }

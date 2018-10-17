@@ -162,4 +162,54 @@
     <string name="control_menu">MENU</string>
 
     <string name="now_loading">Loading, Please Wait…</string>
+
+    <!-- Menu Activity -->
+    <string name="menuItem_search">Search</string>
+    <string name="menuItem_play">Play</string>
+    <string name="menuItem_refreshRoms">Device ROMs</string>
+    <string name="menuItem_settings">Settings</string>
+    <string name="menuItem_globalSettings">Global settings</string>
+    <string name="menuItem_sensorConfiguration">Sensor configuration</string>
+    <string name="menuItem_profiles">Profiles</string>
+    <string name="menuItem_emulationProfiles">Emulation profiles</string>
+    <string name="menuItem_touchscreenProfiles">Touchscreen profiles</string>
+    <string name="menuItem_controllerProfiles">Controller profiles</string>
+    <string name="menuItem_customCheats">Custom cheats</string>
+    <string name="menuItem_help">Help</string>
+    <string name="menuItem_faq">FAQ</string>
+    <string name="menuItem_helpForum">Help forum</string>
+    <string name="menuItem_controllerDiagnostics">Controller diagnostics</string>
+    <string name="menuItem_reportBug">Report bug</string>
+    <string name="menuItem_about">About</string>
+    <string name="menuItem_credits">About US</string>
+    <string name="menuItem_appVersion">App version</string>
+    <string name="menuItem_logcat">Logcat</string>
+    <string name="menuItem_hardwareInfo">Hardware info</string>
+    <string name="menuItem_Tools">Tools</string>
+    <string name="menuItem_Extract">Add Texture Pack</string>
+    <string name="menuItem_Clear">Clear Texture Packs/Caches</string>
+    <string name="menuItem_localeOverride">Language</string>
+    <string name="menuItem_donate">Tip Developer</string>
+
+    <!-- Actions (simply launch an action, aren't related to persistent data) -->
+    <string name="actionResume_title">Resume</string>
+    <string name="actionResume_summary">Unpredictable if cheats are used</string>
+    <string name="actionStart_title">Start</string>
+    <string name="actionRestart_title">Restart</string>
+    <string name="actionRestart_summary">Recommended if cheats are used</string>
+    <string name="actionRemove_title">Remove</string>
+    <string name="actionRemove_summary">Remove from library</string>
+    <string name="actionWiki_title">Wiki</string>
+    <string name="actionWiki_summary">Community help for this game</string>
+    <string name="actionReloadAssets_title">Reload app resources</string>
+    <string name="actionReloadAssets_summary">Does NOT affect user settings, ROMs, game saves, or other custom data</string>
+    <string name="actionResetUserPrefs_title">Defaults</string>
+    <string name="actionResetUserPrefs_summary">Restore default global settings</string>
+    <string name="actionResetUserPrefs_popupMessage">Reset all global preferences to their defaults?</string>
+    <string name="actionResetGamePrefs_title">Defaults</string>
+    <string name="actionResetGamePrefs_summary">Restore default game settings</string>
+    <string name="actionResetGamePrefs_popupMessage">Reset all game preferences to their defaults?<small>\n\nAny manual modifications you may have made to the config file will be overwritten.</small></string>
+    <string name="actionCheatEditor_title">Manage cheat codes</string>
+    <string name="actionCheatEditor_summary">Add, modify, and delete custom cheats</string>
+    <string name="actionShare_title">Share</string>
 </resources>
